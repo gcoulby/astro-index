@@ -40,29 +40,50 @@ export function PageLinksScreen() {
           Back to pages
         </button>
 
-        <ClippedPanel tone="ink" className="border border-astro-white/15">
-          <span className="font-mono text-sm text-accent-pink">
-            Page {page.pageNumber}
+        <ClippedPanel tone="ink" className="flex flex-row gap-2 p-0 w-ful">
+          <span className="font-sans font-extralight text-white text-sm italic">
+            {page.pageNumber.toString().padStart(2, '0')}
           </span>
-          <h1 className="mt-1 font-powerr font-extrabold text-2xl">
-            {page.heading || 'Untitled page'}
+          <h1 className="mt-1 px-0 font-powerr font-extrabold text-astro-white text-3xl uppercase grow">
+            {page.heading.split('(')?.[0] || 'Untitled page'}
           </h1>
+          <div className="flex flex-row items-end">
+            <span className="font-sans font-extralight text-white text-sm italic">
+              {page.heading.split('(')?.[1].slice(0, -1)}
+            </span>
+          </div>
         </ClippedPanel>
       </div>
 
       <Tabs defaultValue="linksTo" className="flex flex-col flex-1 min-h-0">
-        <TabsList className="mx-4">
-          <TabsTrigger value="linksTo">Links to ({linksTo.length})</TabsTrigger>
-          <TabsTrigger value="linkedFrom">
+        <TabsList className="bg-background mx-4">
+          <TabsTrigger
+            className="bg-astro-black data-active:bg-gradient-magenta dark:data-active:bg-gradient-magenta border-transparent dark:data-active:border-transparent"
+            value="linksTo"
+          >
+            Links to ({linksTo.length})
+          </TabsTrigger>
+          <TabsTrigger
+            className="bg-astro-black data-active:bg-gradient-magenta dark:data-active:bg-gradient-magenta border-transparent dark:data-active:border-transparent"
+            value="linkedFrom"
+          >
             Linked from ({linkedFrom.length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="linksTo" className="flex-1 min-h-0">
-          <LinkList pages={linksTo} onOpen={openPage} emptyText="Nothing on this page links elsewhere." />
+          <LinkList
+            pages={linksTo}
+            onOpen={openPage}
+            emptyText="Nothing on this page links elsewhere."
+          />
         </TabsContent>
         <TabsContent value="linkedFrom" className="flex-1 min-h-0">
-          <LinkList pages={linkedFrom} onOpen={openPage} emptyText="No other page links here." />
+          <LinkList
+            pages={linkedFrom}
+            onOpen={openPage}
+            emptyText="No other page links here."
+          />
         </TabsContent>
       </Tabs>
     </div>

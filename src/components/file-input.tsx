@@ -68,19 +68,19 @@ export default function FileInput({
           if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click()
         }}
         className={cn(
-          'flex cursor-pointer flex-col items-center justify-center gap-2 border-2 border-dashed p-8 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-pink',
+          'flex flex-col justify-center items-center gap-2 p-8 border-2 border-dashed focus:outline-none focus-visible:ring-2 text-center transition-colors focus-visible:ring-accent-pink cursor-pointer',
           isDragging
             ? 'border-accent-pink bg-accent-pink/10'
             : 'border-astro-white/25 hover:border-astro-white/50',
         )}
       >
         <Upload className="size-6 text-astro-white/60" />
-        <p className="font-mono text-sm text-astro-white/80">
-          <span className="font-medium text-accent-pink">Click to upload</span>{' '}
+        <p className="font-mono text-astro-white/80 text-sm">
+          <span className="font-medium text-accent-pink">Click to import</span>{' '}
           or drag and drop
         </p>
         {accept && (
-          <p className="font-mono text-xs text-astro-white/40">{accept}</p>
+          <p className="font-mono text-astro-white/40 text-xs">{accept}</p>
         )}
         <input
           ref={inputRef}
@@ -98,16 +98,16 @@ export default function FileInput({
       )}
 
       {file && (
-        <div className="mt-3 flex items-center gap-2 border border-astro-white/15 px-3 py-2 font-mono text-sm">
-          <FileIcon className="size-4 shrink-0 text-astro-white/40" />
-          <span className="min-w-0 flex-1 truncate">{file.name}</span>
-          <span className="shrink-0 text-astro-white/40">
+        <div className="flex items-center gap-2 mt-3 px-3 py-2 border border-astro-white/15 font-mono text-sm">
+          <FileIcon className="size-4 text-astro-white/40 shrink-0" />
+          <span className="flex-1 min-w-0 truncate">{file.name}</span>
+          <span className="text-astro-white/40 shrink-0">
             {formatSize(file.size)}
           </span>
           <button
             onClick={clearFile}
             aria-label={`Remove ${file.name}`}
-            className="shrink-0 text-astro-white/40 hover:text-accent-pink"
+            className="text-astro-white/40 hover:text-accent-pink shrink-0"
           >
             <X className="size-4" />
           </button>

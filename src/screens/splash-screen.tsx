@@ -46,7 +46,7 @@ export function SplashScreen() {
       <header
         className={cn(
           'flex flex-col justify-center items-center font-powerr font-extrabold text-6xl transition-all duration-700 ease-in-out',
-          collapsed ? 'h-[20%] py-0' : 'h-[80%] py-20 ',
+          collapsed ? 'h-[20%] py-0' : 'h-[500dvh] py-20 ',
         )}
       >
         <div className="flex flex-row items-center">
@@ -85,10 +85,11 @@ export function SplashScreen() {
                   Bring your own book
                 </h1>
                 <p className="mt-2 font-mono text-astro-white/80 text-sm leading-relaxed">
-                  AstroIndex does not ship with any book data. Import your own
-                  legally-owned AstroPrisma PDF (single-page edition) to build
-                  your local index. Nothing is uploaded — extraction happens
-                  entirely in this browser and your index stays on this device.
+                  AstroIndex does not ship with any book data. After purchasing
+                  a copy of AstroPrisma, import the single-page edition using
+                  the uploader below. This will build your local index. Nothing
+                  is uploaded! Extraction happens entirely in this browser and
+                  your index stays on your device.
                 </p>
               </ClippedPanel>
 
@@ -110,7 +111,7 @@ export function SplashScreen() {
         alt="astro prisma compatability"
         className={cn(
           'transition-all duration-700',
-          collapsed ? 'mb-4 w-24' : 'mt-10 w-45',
+          collapsed ? 'mb-4 w-45' : 'mt-10 w-45',
         )}
       />
     </main>
