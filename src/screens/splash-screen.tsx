@@ -111,7 +111,7 @@ export function SplashScreen() {
         alt="astro prisma compatability"
         className={cn(
           'transition-all duration-700',
-          collapsed ? 'mb-4 w-45' : 'mt-10 w-45',
+          collapsed ? 'w-35' : 'mt-10 w-45',
         )}
       />
     </main>

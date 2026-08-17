@@ -68,7 +68,7 @@ export default function FileInput({
           if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click()
         }}
         className={cn(
-          'flex flex-col justify-center items-center gap-2 p-8 border-2 border-dashed focus:outline-none focus-visible:ring-2 text-center transition-colors focus-visible:ring-accent-pink cursor-pointer',
+          'flex flex-col justify-center items-center gap-2 p-4 border-2 border-dashed focus:outline-none focus-visible:ring-2 text-center transition-colors focus-visible:ring-accent-pink cursor-pointer',
           isDragging
             ? 'border-accent-pink bg-accent-pink/10'
             : 'border-astro-white/25 hover:border-astro-white/50',
@@ -98,7 +98,7 @@ export default function FileInput({
       )}
 
       {file && (
-        <div className="flex items-center gap-2 mt-3 px-3 py-2 border border-astro-white/15 font-mono text-sm">
+        <div className="flex items-center gap-2 mt-2 px-3 py-1 border border-astro-white/15 font-mono text-sm">
           <FileIcon className="size-4 text-astro-white/40 shrink-0" />
           <span className="flex-1 min-w-0 truncate">{file.name}</span>
           <span className="text-astro-white/40 shrink-0">
