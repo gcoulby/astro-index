@@ -34,7 +34,7 @@ export interface InternalLinkDetail {
 }
 
 export interface AstroIndexPage {
-  page: number
+  pageNumber: number
   heading: string
   text: string
   links_to_pages: number[]
@@ -173,7 +173,7 @@ export async function extractAstroIndex(
     ].sort((a, b) => a - b)
 
     pagesByBookPage.set(bookPage, {
-      page: bookPage,
+      pageNumber: bookPage,
       heading,
       text,
       links_to_pages: linksToPages,
@@ -184,17 +184,19 @@ export async function extractAstroIndex(
 
   // build backlinks
   const backlinks = new Map<number, number[]>()
-  for (const p of pagesByBookPage.values()) backlinks.set(p.page, [])
+  for (const p of pagesByBookPage.values()) backlinks.set(p.pageNumber, [])
   for (const p of pagesByBookPage.values()) {
     for (const target of p.links_to_pages) {
-      backlinks.get(target)?.push(p.page)
+      backlinks.get(target)?.push(p.pageNumber)
     }
   }
   for (const p of pagesByBookPage.values()) {
-    p.linked_from_pages = [...new Set(backlinks.get(p.page) ?? [])].sort(
+    p.linked_from_pages = [...new Set(backlinks.get(p.pageNumber) ?? [])].sort(
       (a, b) => a - b,
     )
   }
 
-  return [...pagesByBookPage.values()].sort((a, b) => a.page - b.page)
+  return [...pagesByBookPage.values()].sort(
+    (a, b) => a.pageNumber - b.pageNumber,
+  )
 }

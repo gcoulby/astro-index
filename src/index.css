@@ -304,3 +304,16 @@
     outline: none !important;
   }
 }
+
+@layer utilities {
+  /* Diagonal hazard-stripe fill, used sparingly for emphasis/warning blocks. */
+  .astro-stripes {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--accent-pink) 0,
+      var(--accent-pink) 10px,
+      var(--astro-black) 10px,
+      var(--astro-black) 20px
+    );
+  }
+}

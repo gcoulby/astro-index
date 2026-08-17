@@ -1,75 +1,25 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import type { ChangeEvent, DragEvent, KeyboardEvent } from 'react'
 import { Upload, X, File as FileIcon } from 'lucide-react'
-import { extractAstroIndex } from '@/converter/extract'
-import * as pdfjsLib from 'pdfjs-dist'
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
+import { cn } from '@/lib/utils'
 
 interface FileInputProps {
-  multiple?: boolean
   accept?: string
   maxSizeMB?: number
-  onFilesChange?: (files: File[]) => void
+  onFileSelected: (file: File) => void
 }
 
+/** Drag-and-drop / click-to-browse file picker. Purely presentational —
+ * callers decide what happens with the selected file. */
 export default function FileInput({
-  multiple = true,
-  accept,
+  accept = 'application/pdf',
   maxSizeMB = 500,
-  onFilesChange = () => {},
+  onFileSelected,
 }: FileInputProps) {
-  const [files, setFiles] = useState<File[]>([])
+  const [file, setFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
-
-  const validate = useCallback(
-    (incoming: File[]): File[] => {
-      const valid: File[] = []
-      for (const file of incoming) {
-        if (file.size > maxSizeMB * 1024 * 1024) {
-          setError(`"${file.name}" is over ${maxSizeMB}MB`)
-          continue
-        }
-        valid.push(file)
-      }
-      return valid
-    },
-    [maxSizeMB],
-  )
-
-  const addFiles = useCallback(
-    (list: FileList | null) => {
-      if (!list) return
-      const incoming = Array.from(list)
-      const valid = validate(incoming)
-      if (valid.length === 0) return
-
-      setError('')
-      setFiles((prev) => {
-        const next = multiple ? [...prev, ...valid] : valid.slice(0, 1)
-        onFilesChange(next)
-        return next
-      })
-    },
-    [multiple, onFilesChange, validate],
-  )
-
-  const removeFile = (index: number) => {
-    setFiles((prev) => {
-      const next = prev.filter((_, i) => i !== index)
-      onFilesChange(next)
-      return next
-    })
-  }
-
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragging(false)
-    addFiles(e.dataTransfer.files)
-  }
 
   const formatSize = (bytes: number): string => {
     if (bytes < 1024) return `${bytes} B`
@@ -77,20 +27,30 @@ export default function FileInput({
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   }
 
-  useEffect(() => {
-    if (files.length > 0) {
-      const run = async () => {
-        const bytes = await files[0].arrayBuffer()
-        const pages = await extractAstroIndex(
-          bytes,
-          { ignore: [1, 2, 3, 144], offset: 3 },
-          pdfjsLib,
-        )
-        console.log(pages)
+  const acceptFile = useCallback(
+    (candidate: File | undefined) => {
+      if (!candidate) return
+      if (candidate.size > maxSizeMB * 1024 * 1024) {
+        setError(`"${candidate.name}" is over ${maxSizeMB}MB`)
+        return
       }
-      run()
-    }
-  }, [files])
+      setError('')
+      setFile(candidate)
+      onFileSelected(candidate)
+    },
+    [maxSizeMB, onFileSelected],
+  )
+
+  const clearFile = () => {
+    setFile(null)
+    if (inputRef.current) inputRef.current.value = ''
+  }
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsDragging(false)
+    acceptFile(e.dataTransfer.files[0])
+  }
 
   return (
     <div className="mx-auto w-full max-w-md">
@@ -107,56 +67,51 @@ export default function FileInput({
         onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => {
           if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click()
         }}
-        className={`flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-8 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+        className={cn(
+          'flex cursor-pointer flex-col items-center justify-center gap-2 border-2 border-dashed p-8 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-pink',
           isDragging
-            ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-300 hover:border-gray-400 '
-        }`}
+            ? 'border-accent-pink bg-accent-pink/10'
+            : 'border-astro-white/25 hover:border-astro-white/50',
+        )}
       >
-        <Upload className="w-6 h-6 text-gray-500" />
-        <p className="text-gray-600 text-sm text-center">
-          <span className="font-medium text-blue-600">Click to upload</span> or
-          drag and drop
+        <Upload className="size-6 text-astro-white/60" />
+        <p className="font-mono text-sm text-astro-white/80">
+          <span className="font-medium text-accent-pink">Click to upload</span>{' '}
+          or drag and drop
         </p>
-        {accept && <p className="text-gray-400 text-xs">{accept}</p>}
+        {accept && (
+          <p className="font-mono text-xs text-astro-white/40">{accept}</p>
+        )}
         <input
           ref={inputRef}
           type="file"
-          multiple={multiple}
           accept={accept}
           className="hidden"
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            addFiles(e.target.files)
+            acceptFile(e.target.files?.[0])
           }
         />
       </div>
 
-      {error && <p className="mt-2 text-red-600 text-sm">{error}</p>}
+      {error && (
+        <p className="mt-2 font-mono text-sm text-accent-pink">{error}</p>
+      )}
 
-      {files.length > 0 && (
-        <ul className="space-y-2 mt-3">
-          {files.map((file, i) => (
-            <li
-              key={`${file.name}-${i}`}
-              className="flex justify-between items-center gap-2 px-3 py-2 border border-gray-200 rounded-md text-sm"
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <FileIcon className="w-4 h-4 text-gray-400 shrink-0" />
-                <span className="truncate">{file.name}</span>
-                <span className="text-gray-400 shrink-0">
-                  {formatSize(file.size)}
-                </span>
-              </div>
-              <button
-                onClick={() => removeFile(i)}
-                aria-label={`Remove ${file.name}`}
-                className="text-gray-400 hover:text-red-600 shrink-0"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </li>
-          ))}
-        </ul>
+      {file && (
+        <div className="mt-3 flex items-center gap-2 border border-astro-white/15 px-3 py-2 font-mono text-sm">
+          <FileIcon className="size-4 shrink-0 text-astro-white/40" />
+          <span className="min-w-0 flex-1 truncate">{file.name}</span>
+          <span className="shrink-0 text-astro-white/40">
+            {formatSize(file.size)}
+          </span>
+          <button
+            onClick={clearFile}
+            aria-label={`Remove ${file.name}`}
+            className="shrink-0 text-astro-white/40 hover:text-accent-pink"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
       )}
     </div>
   )
