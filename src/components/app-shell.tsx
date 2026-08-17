@@ -1,51 +1,57 @@
 import type { ReactNode } from 'react'
-import { RotateCcw } from 'lucide-react'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { BookText, Search, Settings } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo'
-import { useNavStore } from '@/stores/nav-store'
-import { useIndexStore } from '@/stores/index-store'
+import { useNavStore, type Screen } from '@/stores/nav-store'
 
 interface AppShellProps {
   children: ReactNode
 }
 
-/** Shared header + tab navigation for the two search screens. */
+const TABS: { screen: Screen; label: string; icon: typeof BookText }[] = [
+  { screen: 'pageNumberSearch', label: 'Pages', icon: BookText },
+  { screen: 'fuzzySearch', label: 'Search', icon: Search },
+  { screen: 'settings', label: 'Settings', icon: Settings },
+]
+
+/** Shared shell: centered wordmark up top, bottom tab bar for navigation. */
 export function AppShell({ children }: AppShellProps) {
   const { screen, goTo } = useNavStore()
-  const reset = useIndexStore((s) => s.reset)
 
-  const activeTab =
-    screen === 'fuzzySearch' ? 'fuzzySearch' : 'pageNumberSearch'
+  const activeTab: Screen =
+    screen === 'fuzzySearch' || screen === 'settings' ? screen : 'pageNumberSearch'
 
   return (
     <div className="flex flex-col bg-astro-black h-dvh text-astro-white">
-      <header className="flex justify-between items-center px-4 py-2.5 border-astro-white/10 border-b shrink-0">
-        <div className="flex items-center h-full">
-          <span className="grow">
-            <Logo />
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Tabs value={activeTab} onValueChange={(v) => goTo(v as never)}>
-            <TabsList>
-              <TabsTrigger value="pageNumberSearch">Pages</TabsTrigger>
-              <TabsTrigger value="fuzzySearch">Search</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          <button
-            type="button"
-            onClick={() => void reset()}
-            aria-label="Remove imported book and start over"
-            className="text-astro-white/40 hover:text-accent-pink"
-          >
-            <RotateCcw className="size-4" />
-          </button>
+      <header className="flex justify-center items-center py-2.5 border-astro-white/10 border-b shrink-0">
+        <div className="scale-75">
+          <Logo />
         </div>
       </header>
 
       <div className="flex-1 min-h-0">{children}</div>
+
+      <nav className="flex shrink-0 border-astro-white/10 border-t">
+        {TABS.map(({ screen: tabScreen, label, icon: Icon }) => {
+          const active = activeTab === tabScreen
+          return (
+            <button
+              key={tabScreen}
+              type="button"
+              onClick={() => goTo(tabScreen)}
+              className={cn(
+                'flex flex-1 flex-col items-center gap-1 py-2.5 font-mono text-xs transition-colors',
+                active
+                  ? 'text-accent-pink'
+                  : 'text-astro-white/50 hover:text-astro-white/80',
+              )}
+            >
+              <Icon className="size-5" />
+              {label}
+            </button>
+          )
+        })}
+      </nav>
     </div>
   )
 }

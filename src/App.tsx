@@ -4,6 +4,7 @@ import { SplashScreen } from '@/screens/splash-screen'
 import { PageNumberSearchScreen } from '@/screens/page-number-search-screen'
 import { PageLinksScreen } from '@/screens/page-links-screen'
 import { FuzzySearchScreen } from '@/screens/fuzzy-search-screen'
+import { SettingsScreen } from '@/screens/settings-screen'
 import { useNavStore } from '@/stores/nav-store'
 import { useIndexStore } from '@/stores/index-store'
 
@@ -22,6 +23,7 @@ function App() {
       {screen === 'pageNumberSearch' && <PageNumberSearchScreen />}
       {screen === 'pageLinks' && <PageLinksScreen />}
       {screen === 'fuzzySearch' && <FuzzySearchScreen />}
+      {screen === 'settings' && <SettingsScreen />}
     </AppShell>
   )
 }

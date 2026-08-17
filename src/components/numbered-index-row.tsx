@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Link } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { AstroIndexPage } from '@/converter/extract'
 
@@ -19,7 +19,7 @@ export function NumberedIndexRow({
       type="button"
       onClick={onSelect}
       className={cn(
-        'flex items-center gap-3 hover:bg-astro-white/5 px-3 py-2.5 border-astro-white/10 border-b w-full text-left transition-colors',
+        'flex items-center gap-3 hover:bg-astro-white/5 px-3 py-2.5 border-astro-white/10 border-b w-[95dvw] text-left transition-colors',
         className,
       )}
     >
@@ -28,6 +28,17 @@ export function NumberedIndexRow({
       </span>
       <span className="flex-1 min-w-0 font-mono text-astro-white/90 text-sm truncate">
         {page.heading || 'Untitled page'}
+      </span>
+      <span className="flex flex-row">
+        <Link
+          size={10}
+          className={`${page?.links_to_pages?.length > 0 ? 'text-gradient-yellow' : 'text-gradient-indigo'}`}
+        />
+        <span
+          className={`${page?.links_to_pages?.length > 0 ? 'text-gradient-yellow' : 'text-gradient-indigo'}`}
+        >
+          {page.links_to_pages.length}
+        </span>
       </span>
       <ChevronRight className="size-4 text-astro-white/40 shrink-0" />
     </button>

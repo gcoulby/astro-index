@@ -1,7 +1,12 @@
-/** Screen navigation for the app's 5 screens. No router — a fixed, linear flow. */
+/** Screen navigation for the app's screens. No router — a fixed, linear flow. */
 import { create } from 'zustand'
 
-export type Screen = 'splash' | 'pageNumberSearch' | 'pageLinks' | 'fuzzySearch'
+export type Screen =
+  | 'splash'
+  | 'pageNumberSearch'
+  | 'pageLinks'
+  | 'fuzzySearch'
+  | 'settings'
 
 interface NavState {
   screen: Screen
