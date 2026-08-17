@@ -145,9 +145,9 @@ export const ocrTocEntries: TocOcrFallback = async (
     .promise
 
   const worker = await createWorker('eng', OEM.LSTM_ONLY, {
-    workerPath: '/tesseract/worker.min.js',
-    corePath: '/tesseract/tesseract-core-simd-lstm.js',
-    langPath: '/tessdata',
+    workerPath: `${import.meta.env.BASE_URL}tesseract/worker.min.js`,
+    corePath: `${import.meta.env.BASE_URL}tesseract/tesseract-core-simd-lstm.js`,
+    langPath: `${import.meta.env.BASE_URL}tessdata`,
     gzip: true,
     // Blob-wrapped worker scripts (tesseract.js's default) break the core
     // wasm's relative-path resolution — it ends up fetching a bare

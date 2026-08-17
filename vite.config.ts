@@ -42,8 +42,14 @@ function legacyTranspile(): Plugin | null {
   }
 }
 
+// When building for GitHub Pages the app is served from
+// https://gcoulby.github.io/astro-index/ rather than the domain root, so
+// every asset URL needs the repo name as a path prefix.
+const isGithubPages = process.env.GITHUB_PAGES === 'true'
+
 // https://vite.dev/config/
 export default defineConfig({
+  base: isGithubPages ? '/astro-index/' : '/',
   plugins: [react(), tailwindcss(), legacyTranspile()].filter(Boolean),
   resolve: {
     alias: {
