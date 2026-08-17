@@ -7,8 +7,14 @@ import type { AstroIndexPage } from '@/converter/extract'
 import { extractAstroIndex } from '@/converter/extract'
 import { pdfjsLib } from '@/lib/pdf'
 import { clearIndex, loadIndex, saveIndex } from '@/lib/db'
+import { ocrTocEntries } from '@/lib/ocr-toc'
 
-export type IndexStatus = 'hydrating' | 'empty' | 'extracting' | 'ready' | 'error'
+export type IndexStatus =
+  | 'hydrating'
+  | 'empty'
+  | 'extracting'
+  | 'ready'
+  | 'error'
 
 interface IndexState {
   status: IndexStatus
@@ -41,6 +47,7 @@ export const useIndexStore = create<IndexState>((set) => ({
         bytes,
         { ignore: [1, 2, 3, 144], offset: 3 },
         pdfjsLib,
+        ocrTocEntries,
       )
       await saveIndex(pages)
       set({ status: 'ready', pages })
