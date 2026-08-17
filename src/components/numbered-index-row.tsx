@@ -32,10 +32,10 @@ export function NumberedIndexRow({
       <span className="flex flex-row">
         <Link
           size={10}
-          className={`${page?.links_to_pages?.length > 0 ? 'text-gradient-yellow' : 'text-gradient-indigo'}`}
+          className={`${page?.links_to_pages?.length > 0 ? 'text-gradient-yellow' : 'text-pure-basic-black'}`}
         />
         <span
-          className={`${page?.links_to_pages?.length > 0 ? 'text-gradient-yellow' : 'text-gradient-indigo'}`}
+          className={`${page?.links_to_pages?.length > 0 ? 'text-gradient-yellow' : 'text-pure-basic-black'}`}
         >
           {page.links_to_pages.length}
         </span>
